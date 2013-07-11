@@ -20,7 +20,7 @@ References:
    - https://developer.mozilla.org/en-US/docs/JSON
    - https://developer.mozilla.org/en-US/docs/JSON#JSON_in_Firefox_2
 */
-var rest = resquire('restler');
+var rest = require('restler');
 var fs = require('fs');
 var program = require('commander');
 var cheerio = require('cheerio');
@@ -37,7 +37,7 @@ var assertFileExists = function(infile) {
 };
 
 var cheerioHtmlFile = function(htmlfile) {
-    return cheerio.load(fs.readFileSync(htmlfile));
+    return cheerio.load(htmlfile);
 };
 
 var loadChecks = function(checksfile) {
@@ -63,18 +63,18 @@ var clone = function(fn) {
 
 var fetchUrl = function(url, cb){
   rest.get(url).on('complete', cb);
-}
+};
 
 if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-u, --url <http_link>', 'valid URL to html file', clone(assertUrlExists), URL_DEFAULT)
+        .option('-u, --url <http_link>', 'valid URL to html file', URL_DEFAULT)
         .parse(process.argv);
-        fetchUrl(program.url, function(response)){
+        fetchUrl(program.url, function(response) {
           var checkJson = checkHtmlFile(response, program.checks);
           var outJson = JSON.stringify(checkJson, null, 4);
           console.log(outJson);
-        }
+        });
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
